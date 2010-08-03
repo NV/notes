@@ -27,10 +27,7 @@ body {
 #aside {
 	width: 200px;
 	padding: 1em 0;
-	font: 80% 'Segoe UI', 'Lucida Grande', sans-serif
-}
-#entries {
-	max-width: 200px;
+	font: 80% Segoe UI, Lucida Grande, sans-serif
 }
 #aside a {
 	padding: .3em .5em .3em 1em;
@@ -40,7 +37,6 @@ body {
 	cursor: pointer;
 	color: #315379;
 	white-space: nowrap;
-	max-width: 95%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	text-shadow: #fff 0 1px
@@ -97,22 +93,13 @@ function create() {
 	updateList()
 }
 
-function shorten(s) {
-	s = s.slice(0, 50)
-	var index = s.indexOf("\n")
-	if (index > -1) {
-		s = s.slice(0, index)
-	}
-	return s
-}
-
 function updateList() {
 	var l = parseInt(S.last_id) + 1
 	var r = []
 	for (var i=0; i<l; ++i) {
 		var item = S.getItem(i)
 		if (item) {
-			r.push("<a id='item_"+ i +"' href='#"+i+"'>"+ shorten(item) +"</a>")
+			r.push("<a id='item_"+ i +"' href='#"+i+"'>"+ item.slice(0, 50) +"</a>")
 		}
 	}
 
@@ -135,7 +122,7 @@ function check() {
 }
 
 function setTitle(str) {
-	if (str.length >= 50) {
+	if (str.length >= 30) {
 		var i = str.lastIndexOf(" ") + 1
 		if (i)
 			str = str.slice(0, i)
