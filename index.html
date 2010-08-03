@@ -1,6 +1,4 @@
 <!DOCTYPE HTML>
-<html>
-<head>
 <title>Notes</title>
 <style>
 html, body {
@@ -62,14 +60,12 @@ button {
 	bottom: 0
 }
 </style>
-</head>
-<body>
-	<div id=editor contenteditable></div>
-	<div id=aside>
-		<button id=destroy onclick="localStorage.clear();location.hash='#0';location.reload()">Delete all</button>
-		<button id=add onclick="create()">+</button>
-		<div id=entries></div>
-	</div>
+<div id=editor contenteditable></div>
+<div id=aside>
+	<button id=destroy onclick="localStorage.clear();location.hash='#0';location.reload()">Delete all</button>
+	<button id=add onclick="create()">+</button>
+	<div id=entries></div>
+</div>
 <script>
 function $(id){
 	return document.getElementById(id)
@@ -101,20 +97,17 @@ function create() {
 	updateList()
 }
 
-function shorten(str) {
-	str = str.slice(0, 50)
-	var index = str.indexOf("\n")
+function shorten(s) {
+	s = s.slice(0, 50)
+	var index = s.indexOf("\n")
 	if (index > -1) {
-		str = str.slice(0, index)
+		s = s.slice(0, index)
 	}
-	return str
+	return s
 }
 
 function updateList() {
 	var l = parseInt(S.last_id) + 1
-	if (isNaN(l) && isFinite(l)) {
-		throw l
-	}
 	var r = []
 	for (var i=0; i<l; ++i) {
 		var item = S.getItem(i)
@@ -172,4 +165,3 @@ editor.onkeyup = editor.onpaste = function(e){
 
 onload=onhashchange=check
 </script>
-</body></html>
