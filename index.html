@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Notes</title>
+<style>
+html, body {
+	height: 100%;
+	margin: 0;
+	background: #d4dde6
+}
+body {
+	display: table;
+	table-layout: fixed;
+	width: 100%
+}
+#editor,
+#aside {
+	display: table-cell;
+	vertical-align: top
+}
+#editor {
+	font: 120%/1.4 Cambria, sans-serif;
+	padding: 1em 2em;
+	background: #FFF;
+	outline: none;
+	overflow: auto;
+	border-right: 1px solid #BBB
+}
+#aside {
+	width: 200px;
+	padding: 1em 0;
+	font: 80% 'Segoe UI', 'Lucida Grande', sans-serif
+}
+#entries {
+	max-width: 200px;
+}
+#aside a {
+	padding: .3em .5em .3em 1em;
+	display: block;
+	border-top: 1px solid transparent;
+	text-decoration: none;
+	cursor: pointer;
+	color: #315379;
+	white-space: nowrap;
+	max-width: 95%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-shadow: #fff 0 1px
+}
+#aside .selected {
+	background: #405770 url(bg.png) repeat-x 0 0;
+	border-top-color: #68788c;
+	margin-left: -1px;
+	color: #fff;
+	text-shadow: #000 0 1px
+}
+button {
+	margin: 0 0 1em 1em
+}
+#destroy {
+	position: absolute;
+	bottom: 0
+}
+</style>
+</head>
+<body>
+	<div id=editor contenteditable></div>
+	<div id=aside>
+		<button id=destroy onclick="localStorage.clear();location.hash='#0';location.reload()">Delete all</button>
+		<button id=add onclick="create()">+</button>
+		<div id=entries></div>
+	</div>
+<script>
+function $(id){
+	return document.getElementById(id)
+}
+var S = localStorage
+var s = getSelection()
+var editor = $("editor")
+var entries = $("entries")
+var id = S.last_id = S.last_id || 0
+
+
+function show(id) {
+	editor.innerHTML = S.getItem(id + "_html") || ""
+}
+
+function select(){
+	var r = document.createRange()
+	r.setStart(editor, 0)
+	s.removeAllRanges()
+	s.addRange(r)
+}
+
+function create() {
+	id = ++S.last_id
+	editor.textContent = ''
+	S.setItem(id, '')
+	location.hash = "#"+ id
+	select()
+	updateList()
+}
+
+function shorten(str) {
+	str = str.slice(0, 50)
+	var index = str.indexOf("\n")
+	if (index > -1) {
+		str = str.slice(0, index)
+	}
+	return str
+}
+
+function updateList() {
+	var l = parseInt(S.last_id) + 1
+	if (isNaN(l) && isFinite(l)) {
+		throw l
+	}
+	var r = []
+	for (var i=0; i<l; ++i) {
+		var item = S.getItem(i)
+		if (item) {
+			r.push("<a id='item_"+ i +"' href='#"+i+"'>"+ shorten(item) +"</a>")
+		}
+	}
+
+	entries.innerHTML = r.join("")
+	highlightSelected()
+}
+
+function check() {
+	var hash = location.hash
+	if (hash) {
+		id = hash.slice(1)
+		if (id in S) {
+			show(id)
+		}
+	} else {
+		create()
+	}
+	updateList()
+	select()
+}
+
+function setTitle(str) {
+	if (str.length >= 50) {
+		var i = str.lastIndexOf(" ") + 1
+		if (i)
+			str = str.slice(0, i)
+		str += "..."
+	}
+	document.title = str
+}
+
+function highlightSelected(){
+	var hash = location.hash.slice(1)
+	if (!hash) return
+	var element = $("item_"+hash)
+	if (element) {
+		element.className += ' selected'
+		setTitle(element.textContent)
+	}
+}
+
+editor.onkeyup = editor.onpaste = function(e){
+	var text = e.target.textContent
+	if (text !== S.getItem(id)) {
+		S.setItem(id, text)
+		S.setItem(id+"_html", e.target.innerHTML)
+	}
+	updateList()
+}
+
+onload=onhashchange=check
+</script>
+</body></html>
