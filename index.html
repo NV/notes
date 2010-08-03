@@ -142,12 +142,12 @@ function highlightSelected(){
 }
 
 editor.onkeyup = editor.onpaste = function(e){
-	var text = e.target.textContent
-	if (text !== S.getItem(id)) {
-		S.setItem(id, text)
-		S.setItem(id+"_html", e.target.innerHTML)
+	var html = e.target.innerHTML
+	if (html != S.getItem(id+"_html")) {
+		S.setItem(id, e.target.textContent)
+		S.setItem(id+"_html", html)
+		updateList()
 	}
-	updateList()
 }
 
 onload=onhashchange=check
